@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JSNetworkX images as nodes demo</title>
+        <link href="graph.css" type="text/css" rel="stylesheet">
+        <script type="text/javascript" src="d3.min.js" charset="utf-8"></script>
+        <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+        <script type="text/javascript" src="jsnetworkx.js"></script>
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="casm.js"></script>
+        <script src="system.js"></script>
+        <script src="model.js"></script>
+    </head>
+    <body>
+        <nav class="navbar">
+            <ul>
+                <li><a href="index.html" style="color:white;">Transformations</a></li>
+                <li><a href="index.html">Test</a></li>
+                    <ul>
+                        <li><a href="index.html">Test</a></li>
+                    </ul>
+                </li>
+                <li><a href="index.html">Test</a></li>
+            </ul>
+        </nav>
+        <div id=main>
+        <p id="systeminfo">  </p>
+        <script>
+	        var main = function(d) {
+	        	  document.getElementById("systeminfo").innerHTML = "Nodes in the System:";
+	        	  for (var i = 0; i < nodes.length; i++) {
+	        		  document.getElementById("systeminfo").innerHTML += nodes[i] + ", ";
+	        	  }
+	        }
+	        main();
+        </script>
+        <p id="buttons">
+        	<button onclick="addClient();updateState();">Add Client</button> 
+        	<button onclick="addServer();updateState();">Add Server</button>
+        </p>
+        <p id="nodeinfo">  </p>
+        <div id="canvas"></div> 
+        <script type="text/javascript">
+        	function updateState() {
+        		document.getElementById("nodeinfo").innerHTML = state;
+        	}
+            function myOverFunction(casmname) {
+            	document.getElementById("nodeinfo").innerHTML = "MOUSE NOW OVER ";
+                for (var i = 0; i < G.nodes().length; i++) {
+                	if (G.nodes()[i].name == casmname) {
+                		document.getElementById("nodeinfo").innerHTML += "CASM NAME: "+ G.nodes()[i].name + 
+                														"<br>MODULE: "+ G.nodes()[i].module +
+                														"<br>BOX: "+ G.nodes()[i].box;
+                	}
+                }
+            }
+
+            var G = new jsnx.DiGraph();
+            
+            G.addNodesFrom(nodes);
+            G.addEdgesFrom(edges);
+
+            jsnx.draw(G, {element: '#canvas',
+                          withLabels: true,
+                          nodeAttr: { r: 30,
+                        	  		  title: function(d) {return d.label;},
+                                      "onmouseover": function(d) {console.log("myOverFunction(\""+d.node.name+"\");"); return "myOverFunction(\""+d.node.name+"\");";}
+                                     },
+                          nodeStyle: { fill: function(d) {return d.data.color;}
+                                     },
+                          weighted: true,
+                          edgeStyle: { width: '400',
+                                       fill: '#999',
+                                       'stroke-width': 5
+                                      },
+                          labelStyle: {fill: 'white',
+                        	  		   "font-size": "13px"
+                        	  		  },
+                          stickyDrag: true
+                      });
+            </script>
+    </div>
+    </body>
+</html>
