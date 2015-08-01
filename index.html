@@ -39,19 +39,26 @@
         <script>
         var parseForm = function() {
 	        var x = document.getElementById("frm1");
-	        if (pc <= 2){
-	        	createCASM(x.elements[0].value, x.elements[1].value, x.elements[2].value);
-	        }
-	        if (pc > 2){
-	        	replicateCASM(x.elements[0].value);
-	        }
+	        createCASM(x.elements[0].value, x.elements[1].value, x.elements[2].value);
+        }
+        
+        var paxosForm = function() {
+	        var x = document.getElementById("frm1");
+	        paxosCASM(x.elements[0].value);
+        }
+        
+        var quorumForm = function() {
+	        var x = document.getElementById("frm1");
+	        quorumCASM(x.elements[0].value);
         }
         
         var changeInstruction = function() {
         	if (pc == 1){document.getElementById("instruction").innerHTML = "Add server CASM";}
         	if (pc == 2){
         		document.getElementById("instruction").innerHTML = "Write name of CASM";
-        		document.getElementById("frm1").innerHTML = "CASM name: <input type='text' name='casmid'><br><input type='button' onclick='pc += 1; parseForm();changeInstruction();updateState();' value='Replicate'>";
+        		document.getElementById("frm1").innerHTML = "CASM name: <input type='text' name='casmid'><br>" +
+        				"<input type='button' onclick='pc += 1; quorumForm();changeInstruction();updateState();' value='Quorum Replication'>" + 
+        				"<input type='button' onclick='pc += 1; paxosForm();changeInstruction();updateState();' value='Paxos Replication'>";
         		}
         }
         
