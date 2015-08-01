@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>JSNetworkX images as nodes demo</title>
-        <link href="graph.css" type="text/css" rel="stylesheet">
+        <link href="main.css" type="text/css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
         <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
         <script type="text/javascript" src="http://jsnetworkx.org/javascripts/jsnetworkx.js"></script>
@@ -24,6 +24,39 @@
             </ul>
         </nav>
         <div id=main>
+        <input type="button" onclick="main();updateState();" value="Create Example Graph!">
+        
+        <script>var pc = 0;</script>
+        <p id="instruction">Add client CASM </p>
+        <p id="input">
+        <form id="frm1" action="form_action.asp">
+        CASM name: <input type="text" name="casmid"><br>
+        Module: <input type="text" name="module"><br>
+        Box: <input type="text" name="box"><br><br>
+        <input type="button" onclick="pc += 1; parseForm();changeInstruction();updateState();" value="Submit">
+        </form>
+        </p>
+        <script>
+        var parseForm = function() {
+	        var x = document.getElementById("frm1");
+	        if (pc <= 2){
+	        	createCASM(x.elements[0].value, x.elements[1].value, x.elements[2].value);
+	        }
+	        if (pc > 2){
+	        	replicateCASM(x.elements[0].value);
+	        }
+        }
+        
+        var changeInstruction = function() {
+        	if (pc == 1){document.getElementById("instruction").innerHTML = "Add server CASM";}
+        	if (pc == 2){
+        		document.getElementById("instruction").innerHTML = "Write name of CASM";
+        		document.getElementById("frm1").innerHTML = "CASM name: <input type='text' name='casmid'><br><input type='button' onclick='pc += 1; parseForm();changeInstruction();updateState();' value='Replicate!'>";
+        		}
+        }
+        
+        </script>
+        <!--
         <p id="systeminfo">  </p>
         <script>
 	        var main = function(d) {
@@ -34,34 +67,33 @@
 	        }
 	        main();
         </script>
-	<!--
-        <p id="buttons">
-        	<button onclick="addClient();updateState();">Add Client</button>
-        	<button onclick="addServer();updateState();">Add Server</button>
-        </p>
-	-->
+        -->
+
         <p id="nodeinfo">  </p>
-        <div id="canvas"></div>
+        <div id="canvas"></div> 
         <script type="text/javascript">
+        var G;
         	function updateState() {
+        		G = new jsnx.DiGraph();
+                
+                G.addNodesFrom(nodes);
+                G.addEdgesFrom(edges);
         		document.getElementById("nodeinfo").innerHTML = state;
+        		drawGraph();
         	}
+        	
             function myOverFunction(casmname) {
             	document.getElementById("nodeinfo").innerHTML = "MOUSE NOW OVER ";
                 for (var i = 0; i < G.nodes().length; i++) {
                 	if (G.nodes()[i].name == casmname) {
-                		document.getElementById("nodeinfo").innerHTML += "CASM NAME: "+ G.nodes()[i].name +
+                		document.getElementById("nodeinfo").innerHTML += "CASM NAME: "+ G.nodes()[i].name + 
                 														"<br>MODULE: "+ G.nodes()[i].module +
                 														"<br>BOX: "+ G.nodes()[i].box;
                 	}
                 }
             }
-
-            var G = new jsnx.DiGraph();
-
-            G.addNodesFrom(nodes);
-            G.addEdgesFrom(edges);
-
+            
+            function drawGraph() {
             jsnx.draw(G, {element: '#canvas',
                           withLabels: true,
                           nodeAttr: { r: 30,
@@ -79,7 +111,9 @@
                         	  		   "font-size": "13px"
                         	  		  },
                           stickyDrag: true
-                      });
+                      })
+            }
+            updateState();
             </script>
     </div>
     </body>

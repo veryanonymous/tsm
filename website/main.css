@@ -19,6 +19,13 @@ body{
     padding:15px;
 }
 
+#input {
+    height:10px;
+    width:100%;
+    float:left;
+    padding:15px;
+}
+
 #nodeinfo {
     height:10px;
     width:100%;
