@@ -34,12 +34,14 @@
 	        }
 	        main();
         </script>
+	<!--
         <p id="buttons">
-        	<button onclick="addClient();updateState();">Add Client</button> 
+        	<button onclick="addClient();updateState();">Add Client</button>
         	<button onclick="addServer();updateState();">Add Server</button>
         </p>
+	-->
         <p id="nodeinfo">  </p>
-        <div id="canvas"></div> 
+        <div id="canvas"></div>
         <script type="text/javascript">
         	function updateState() {
         		document.getElementById("nodeinfo").innerHTML = state;
@@ -48,7 +50,7 @@
             	document.getElementById("nodeinfo").innerHTML = "MOUSE NOW OVER ";
                 for (var i = 0; i < G.nodes().length; i++) {
                 	if (G.nodes()[i].name == casmname) {
-                		document.getElementById("nodeinfo").innerHTML += "CASM NAME: "+ G.nodes()[i].name + 
+                		document.getElementById("nodeinfo").innerHTML += "CASM NAME: "+ G.nodes()[i].name +
                 														"<br>MODULE: "+ G.nodes()[i].module +
                 														"<br>BOX: "+ G.nodes()[i].box;
                 	}
@@ -56,7 +58,7 @@
             }
 
             var G = new jsnx.DiGraph();
-            
+
             G.addNodesFrom(nodes);
             G.addEdgesFrom(edges);
 
