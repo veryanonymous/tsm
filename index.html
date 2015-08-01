@@ -28,14 +28,12 @@
         
         <script>var pc = 0;</script>
         <p id="instruction">Add client CASM </p>
-        <p id="input">
         <form id="frm1" action="form_action.asp">
         CASM name: <input type="text" name="casmid"><br>
         Module: <input type="text" name="module"><br>
         Box: <input type="text" name="box"><br><br>
         <input type="button" onclick="pc += 1; parseForm();changeInstruction();updateState();" value="Submit">
         </form>
-        </p>
         <script>
         var parseForm = function() {
 	        var x = document.getElementById("frm1");
@@ -90,7 +88,7 @@
         	}
         	
             function myOverFunction(casmname) {
-            	document.getElementById("nodeinfo").innerHTML = "MOUSE NOW OVER ";
+            	document.getElementById("nodeinfo").innerHTML = "";
                 for (var i = 0; i < G.nodes().length; i++) {
                 	if (G.nodes()[i].name == casmname) {
                 		document.getElementById("nodeinfo").innerHTML += "CASM NAME: "+ G.nodes()[i].name + 
