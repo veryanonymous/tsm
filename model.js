@@ -1,5 +1,8 @@
 var box = "127.0.0.1:12000";
 var state = "";
+var system = new System();
+var nodes = [];
+var edges = [];
 
 function isNumber(obj) { return !isNaN(parseFloat(obj)) }
 
@@ -38,14 +41,25 @@ var quorum = function(casm, n) {
 	 return system;
 }
 
-var addClient = function() {
-	var client =  new CASM("client", "omnids.client", box);
-	state += "Added " + client + "<br>";
+var createCASM = function(name, module, box) {
+	var casm =  new CASM(name, module, box);
+	state += "Added " + casm.name + "<br>";
+	var casmSystem = new System([casm], [casm]);
+	casmSystem.graph.addNode(casm);
+	system.connect(casmSystem);
+	nodes = system.graph.nodes();
+	edges = system.graph.edges();
 }
 
-var addServer = function() {
-	var server =  new CASM("server", "omnids.server", box);
-	state += "Added " + server + "<br>";
+var replicateCASM = function(name) {
+	for (i = 0; i < system.graph.nodes().length; i++) {
+		if (system.graph.nodes()[i].name == name){
+			replicatedSystem = paxos(system.graph.nodes()[i], 3);
+			system.connect(replicatedSystem);
+			nodes = system.graph.nodes();
+			edges = system.graph.edges();
+		}
+	}
 }
 
 var main = function() {
@@ -65,4 +79,3 @@ var main = function() {
   edges = clientSystem.graph.edges();
 }
 
-main();
