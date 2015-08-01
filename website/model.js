@@ -51,10 +51,21 @@ var createCASM = function(name, module, box) {
 	edges = system.graph.edges();
 }
 
-var replicateCASM = function(name) {
+var paxosCASM = function(name) {
 	for (i = 0; i < system.graph.nodes().length; i++) {
 		if (system.graph.nodes()[i].name == name){
 			replicatedSystem = paxos(system.graph.nodes()[i], 3);
+			system.connect(replicatedSystem);
+			nodes = system.graph.nodes();
+			edges = system.graph.edges();
+		}
+	}
+}
+
+var quorumCASM = function(name) {
+	for (i = 0; i < system.graph.nodes().length; i++) {
+		if (system.graph.nodes()[i].name == name){
+			replicatedSystem = quorum(system.graph.nodes()[i], 3);
 			system.connect(replicatedSystem);
 			nodes = system.graph.nodes();
 			edges = system.graph.edges();
