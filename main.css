@@ -53,6 +53,15 @@ body{
 		background-color:#464646;
 		border-radius:7px;
 	}
+
+#systemcanvas {
+		float: left;
+		width:30%;
+		height:200px;
+		border-top-left-radius:0px; 
+		border-bottom-left-radius:0px;
+		overflow: hidden;	
+}
 	
 #canvas {
 		float: left;

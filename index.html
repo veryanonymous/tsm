@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>JSNetworkX images as nodes demo</title>
+        <title>Transformations</title>
         <link href="main.css" type="text/css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
         <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
@@ -20,8 +20,9 @@
         -->
         <script src="casm.js"></script>
         <script src="system.js"></script>
-        <script src="structure.js"></script>
+        <script src="environment.js"></script>
         <script src="model.js"></script>
+        <script src="transformations.js"></script>
 
 	</head>
     <body>
@@ -39,19 +40,20 @@
         <div id=main>
 	    <div id='terminal'></div>
 		<div id='graph'></div>
-        <p id="nodeinfo">  </p>
+        <p id="nodeinfo"></p>
+        <div id="systemcanvas"></div>
         <div id="canvas"></div>
         
         <script type="text/javascript">
         	var G;
         	function updateState() {
         		G = new jsnx.DiGraph();
-                G.addNodesFrom(mainSystem.structure.graph.nodes());
-                G.addEdgesFrom(mainSystem.structure.graph.edges());
+                G.addNodesFrom(environment.graph.nodes());
+                G.addEdgesFrom(environment.graph.edges());
         		document.getElementById("nodeinfo").innerHTML = state_html;
         		drawGraph();
         	}
-        	
+        	<!--
             function mouseOverFunction(casmname) {
             	document.getElementById("nodeinfo").innerHTML = "";
                 for (var i = 0; i < G.nodes().length; i++) {
@@ -61,6 +63,31 @@
                 														"<br>BOX: "+ G.nodes()[i].box;
                 	}
                 }
+            }
+            -->
+            
+           function mouseOverFunction(casmname) {
+            for (var i = 0; i < environment.graph.nodes().length; i++) {
+                if (environment.graph.nodes()[i].name == casmname) {
+           		 	jsnx.draw(environment.graph.nodes()[i].graph, {element: '#systemcanvas',
+                          withLabels: true,
+                          nodeAttr: { r: 30,
+                        	  		  title: function(d) {return d.label;}
+                                     },
+                          nodeStyle: { fill: function(d) {return d.data.color;}
+                                     },
+                          weighted: true,
+                          edgeStyle: { width: '400',
+                                       fill: '#999',
+                                       'stroke-width': 5
+                                      },
+                          labelStyle: {fill: 'white',
+                        	  		   "font-size": "13px"
+                        	  		  },
+                          stickyDrag: true
+                      })
+               	 }
+            	}
             }
             
             function drawGraph() {
