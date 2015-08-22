@@ -1,4 +1,4 @@
-
+function isNumber(obj) { return !isNaN(parseFloat(obj)) }
 
 var App = {
     echo: function(text) {
@@ -23,46 +23,40 @@ var App = {
     	this.echo("Restarted the system! All CASMs are removed.");
     	updateState();
     },
-    create: function(CASM) {
+    create: function(name) {
     	var module = "module.module";
     	var box = "127.0.0.1:12000";
     	
-    	createCASM(CASM, module, box);
-    	this.echo("Added CASM " + CASM);
+    	createElement(name, module, box);
+    	this.echo("Added System " + name);
     	updateState();
     },
-    remove: function(CASM) {
-    	removeElement(CASM);
-    	this.echo("Removed CASM " + CASM);
+    remove: function(name) {
+    	removeElement(name);
+    	this.echo("Removed System " + name);
     	updateState();
     },
-    connect: function(CASM1, CASM2) {
-    	if (connectElements(CASM1, CASM2)) {
+    connect: function(name1, name2) {
+    	if (connectSystems(name1, name2)) {
     		updateState();
     	}
     	else
-    		this.echo("CASM does not exist!");
+    		this.echo("System does not exist!");
     },
-    disconnect: function(CASM1, CASM2) {
-    	if (connectElements(CASM1, CASM2)) {
+    disconnect: function(name1, name2) {
+    	if (disconnectSystems(name1, name2)) {
     		updateState();
-    	    this.echo(strState());
     	}
     	else
-    		this.echo("CASM does not exist!");
+    		this.echo("Either the system or the edge does not exist!");
     },
-    example: function() {
-    	this.echo("Creating example graph.");
-    	examplegraph();
-    	updateState();
-    },
-    paxos: function(CASM, n) {
+    paxos: function(name, n) {
     	if (!isNumber(n))
     		this.echo("Second argument must be an integer!");
-    	else if (paxosCASM(CASM, n))
+    	else if (paxosSystem(name, n))
     		updateState();
     	else
-    		this.echo("CASM " + CASM + " does not exist!");
+    		this.echo("CASM " + name + " does not exist!");
     },
     quorum: function(CASM, n) {
     	if (!isNumber(n))
@@ -72,8 +66,13 @@ var App = {
     	else
     		this.echo("CASM " + CASM + " does not exist!");
     },
+    example: function() {
+    	this.echo("Creating example graph.");
+    	examplegraph();
+    	updateState();
+    },
     state: function() {
-    	this.echo(stateToString());
+    	this.echo(environment.toString());
     },
     about: function() {
         this.echo("To get more information about Transformations, go to <a href='http:///' target='_blank'>Transformations</a>", {raw:true});
