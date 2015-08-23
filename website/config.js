@@ -1,4 +1,4 @@
-// For every box, we know the Probability for Failure, 
+// For every box, we know the Probability for Failure,
 // Compute, Memory, Storage and Network Resources
 // FaultTolerance = Probability of Failure between 0.0-1.0
 // Compute = #CPU * ClockSpeed
@@ -28,7 +28,7 @@ slo[resources.COMPUTE] = 2.4;
 slo[resources.MEMORY] = 4;
 slo[resources.STORAGE] = 100;
 slo[resources.NETWORK] = 1;
-slo[resources.SECURITY] = 0; // 0 for no security 1 for yes security  
+slo[resources.SECURITY] = 0; // 0 for no security 1 for yes security
 
 /////// ENVIRONMENT ///////
 // boxes include the environment information
@@ -55,7 +55,7 @@ boxes["127.0.0.1:14002"][resources.NETWORK] = 1; // Gbit/sec
 var packing = function(workload, slo, environment) {
 	// For now ignore the workload
 	console.log("Packing..");
-	
+
 }
 
 packing();

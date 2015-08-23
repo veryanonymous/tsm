@@ -43,8 +43,8 @@ var disconnectSystems = function(name1, name2) {
 		if (name2 == environment.graph.nodes()[i].name)
 			system2 = environment.graph.nodes()[i];
 	}
-	
-	if (system1 && system2) {	
+
+	if (system1 && system2) {
 		if (environment.graph.hasEdge(system1, system2)) {
 			environment.graph.removeEdge(system1, system2);
 			return 1;
@@ -77,7 +77,7 @@ var restart = function() {
 var examplegraph = function() {
   var client =  new CASM("client", "omnids.client", box);
   var server =  new CASM("server", "omnids.server", box);
-  
+
   mainSystem = quorum(client, 3);
   var serverSystem = paxos(server, 3);
   mainSystem.postconnect(serverSystem);
@@ -90,7 +90,7 @@ var stateToString = function() {
 	}
 	rstr += "\n\nLow-level State:\n";
 	rstr += mainSystem.toString();
-	
+
 	return rstr;
 }
 

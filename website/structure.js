@@ -11,11 +11,11 @@ Structure.prototype.connect = function(givenStructure) {
 	// Add new edges
     this.graph.addEdgesFrom(givenStructure.graph.edges());
     // Connect Structures (this creates gates)
-    for (i = 0; i < this.outputNodes.length; i++) { 
+    for (i = 0; i < this.outputNodes.length; i++) {
     	for (j = 0; j < givenStructure.inputNodes.length; j++) {
     		// Create new edges
     		this.graph.addEdge(this.outputNodes[i], givenStructure.inputNodes[j]);
-    	}	    
+    	}
     }
     // Adjust output nodes
 	this.outputNodes = [];
@@ -40,12 +40,12 @@ Structure.prototype.replace = function(oldSystem, newSystem) {
 	// TODO: Adjust input and outputNodes!
 	// If the inputNodes of this are the inputNodes of oldSystem, replace with newSystem's inputNodes
 	// If the outputNodes of this are the outputNodes of oldSystem, replace with newSystem's outputNodes
-	
+
 	// Remove nodes and edges that are in the oldSystem
 	this.graph.removeNodesFrom(oldSystem.structure.graph.nodes());
 	// Add nodes and edges from the newSystem
 	this.graph.addEdgesFrom(newSystem.structure.graph.edges());
-	
+
 	// Add new connections to nodes outside given system
 	for (i = 0; i < nodesToConnectToInputs.length; i++) {
 		for (j = 0; j < newSystem.structure.inputNodes.length; j++) {
