@@ -15,7 +15,7 @@ var App = {
         this.echo(" encrypt [NODE1] [NODE2]     encrypts connection between NODE1");
         this.echo("                             and NODE2");
         this.echo(" state                       prints the state of the system");
-        this.echo(" help                        prints this help screen");                        
+        this.echo(" help                        prints this help screen");
         this.echo("");
     },
     restart: function() {
@@ -26,7 +26,7 @@ var App = {
     create: function(name) {
     	var module = "module.module";
     	var box = "127.0.0.1:12000";
-    	
+
     	createElement(name, module, box);
     	this.echo("Added System " + name);
     	updateState();

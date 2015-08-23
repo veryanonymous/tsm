@@ -3,13 +3,13 @@ var System = function(name, graph, inputNodes, outputNodes) {
 	this.graph = typeof graph !== 'undefined' ? graph : new jsnx.DiGraph();
 	this.inputNodes = typeof inputNodes !== 'undefined' ? inputNodes : [];
 	this.outputNodes = typeof outputNodes !== 'undefined' ? outputNodes : [];
-	
+
 	this.preconnect = 0;
 	this.postconnect = 0;
 }
 
 System.prototype.preconnect = function(system) {
-	
+
 };
 
 System.prototype.postconnect = function(givenSystem) {
@@ -19,11 +19,11 @@ System.prototype.postconnect = function(givenSystem) {
 	// Add new edges
     this.graph.addEdgesFrom(givenSystem.graph.edges());
     // Connect systems
-    for (i = 0; i < this.outputNodes.length; i++) { 
+    for (i = 0; i < this.outputNodes.length; i++) {
     	for (j = 0; j < givenSystem.inputNodes.length; j++) {
     		// Create new edges
     		this.graph.addEdge(this.outputNodes[i], givenSystem.inputNodes[j]);
-    	}	    
+    	}
     }
     // Adjust outputNodes
 	this.outputNodes = [];

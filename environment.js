@@ -24,12 +24,12 @@ Environment.prototype.replace = function(oldSystem, newSystem) {
 	// TODO: Adjust input and outputNodes!
 	// If the inputNodes of this are the inputNodes of oldSubSystem, replace with newSubSystem's inputNodes
 	// If the outputNodes of this are the outputNodes of oldSubSystem, replace with newSubSystem's outputNodes
-	
+
 	// Remove nodes and edges that are in the oldSubSystem
 	this.graph.removeNodesFrom(oldSystem.graph.nodes());
 	// Add nodes and edges from the newSubSystem
 	this.graph.addEdgesFrom(newSystem.graph.edges());
-	
+
 	// Add new connections to nodes outside given system
 	for (i = 0; i < nodesToConnectToInputs.length; i++) {
 		for (j = 0; j < newSystem.inputNodes.length; j++) {
@@ -52,15 +52,15 @@ Environment.prototype.paxos = function(name, n) {
 	// Paxos transformation creates new client and server casms:
 	// Server: Replica, Server
 	// Client: Matcher, Client, Proxy
-	
+
 	// When transforming a casm, it gets a Replica to the left
 	// And the pre and post connect functions change:
 	// When preconnecting to a PaxosCASM, the Client gets a Proxy
 	// attached to the right
 	// When postconnecting to a PaxosCASM, the Client gets a Matcher
 	// attached to the left
-	
-	var i, j, k, system;	
+
+	var i, j, k, system;
 	// Find the system!
 	for (i = 0; i < this.graph.nodes().length; i++) {
 		if (name == this.graph.nodes()[i].name) {
@@ -68,7 +68,7 @@ Environment.prototype.paxos = function(name, n) {
 			// TODO: For now the System has to be one CASM
 			var casm = this.graph.nodes()[i].graph.nodes()[0];
 			this.graph.nodes()[i].graph.removeNode(this.graph.nodes()[i].graph.nodes()[0]);
-			
+
 			var replicas = [];
 			this.graph.nodes()[i].inputNodes = [];
 			this.graph.nodes()[i].outputNodes = [];
@@ -108,8 +108,8 @@ Environment.prototype.paxos = function(name, n) {
 					system.graph.addEdge(system.outputNodes[k], proxy);
 				system.outputNodes = [proxy];
 			}
-			
-			
+
+
 			// For every edge that is directed from this system, prepend matcher to that system!
 			for (j = 0; j < this.graph.edges().length; j++) {
 				if (this.graph.edges()[j][0] == this.graph.nodes()[i]) {
@@ -121,7 +121,7 @@ Environment.prototype.paxos = function(name, n) {
 					this.graph.edges()[j][1].inputNodes = [matcher];
 				}
 			}
-			
+
 			// Set postconnect function
 			this.graph.nodes()[i].postconnect = function(system) {
 				var matcher = new CASM(system.name+"/matcher"+i.toString(), "omnids.paxos.matcher", box);
@@ -147,8 +147,8 @@ Environment.prototype.connect = function(name1, name2) {
 		if (name2 == this.graph.nodes()[i].name)
 			system2 = this.graph.nodes()[i];
 	}
-	
-	if (system1 && system2) {	
+
+	if (system1 && system2) {
 		this.graph.addEdge(system1, system2);
 		// If system1 has a postconnect, edit system2
 		if (system1.postconnect) system1.postconnect(system2);

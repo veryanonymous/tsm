@@ -8,12 +8,12 @@
         <script src="http://jsnetworkx.org/javascripts/jsnetworkx.js"></script>
         <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
         <script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
-        
+
         <link href="jquery.terminal.css" rel="stylesheet"/>
         <script src="jquery.mousewheel.min.js"></script>
         <script src="jquery.terminal-0.8.8.min.js"></script>
         <script src="terminal.js"></script>
-        
+
         <!-- uncomment if no internet connection while testing
         <script src="d3.min.js"></script>
         <script type="text/javascript" src="jsnetworkx.js"></script>
@@ -43,7 +43,7 @@
         <p id="nodeinfo"></p>
         <div id="systemcanvas"></div>
         <div id="canvas"></div>
-        
+
         <script type="text/javascript">
         	var G;
         	function updateState() {
@@ -58,14 +58,14 @@
             	document.getElementById("nodeinfo").innerHTML = "";
                 for (var i = 0; i < G.nodes().length; i++) {
                 	if (G.nodes()[i].name == casmname) {
-                		document.getElementById("nodeinfo").innerHTML += "CASM NAME: "+ G.nodes()[i].name + 
+                		document.getElementById("nodeinfo").innerHTML += "CASM NAME: "+ G.nodes()[i].name +
                 														"<br>MODULE: "+ G.nodes()[i].module +
                 														"<br>BOX: "+ G.nodes()[i].box;
                 	}
                 }
             }
             -->
-            
+
            function mouseOverFunction(casmname) {
             for (var i = 0; i < environment.graph.nodes().length; i++) {
                 if (environment.graph.nodes()[i].name == casmname) {
@@ -89,7 +89,7 @@
                	 }
             	}
             }
-            
+
             function drawGraph() {
             jsnx.draw(G, {element: '#canvas',
                           withLabels: true,
@@ -112,7 +112,7 @@
             }
             updateState();
             </script>
-            
+
     </div>
     </body>
 </html>

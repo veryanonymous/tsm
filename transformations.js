@@ -1,16 +1,15 @@
-
 var paxos = function(casm, n) {
 	// Paxos transformation creates new client and server casms:
 	// Server: Replica, Server
 	// Client: Matcher, Client, Proxy
-	
+
 	// When transforming a casm, it gets a Replica to the left
 	// And the pre and post connect functions change:
 	// When preconnecting to a PaxosCASM, the Client gets a Proxy
 	// attached to the right
 	// When postconnecting to a PaxosCASM, the Client gets a Matcher
 	// attached to the left
-	
+
 	var proxy,node,replica,system,replicas;
 	var i,j;
 	replicas = [];
@@ -34,7 +33,7 @@ var paxos = function(casm, n) {
 	// Create preconnect system
 	systemToPreconnect = createSystemfromCASM(new CASM(casm.name+"/proxy", "omnids.paxos.proxy"));
 	system.preconnectSystems.push(systemToPreconnect);
-	
+
 	// Create postconnect system
 	systemToPostconnect = createSystemfromCASM(new CASM(casm.name+"/matcher", "omnids.paxos.matcher"));
 	system.postconnectSystems.push(systemToPostconnect);
@@ -51,7 +50,7 @@ var quorum = function(casm, n) {
 		quorum = new CASM(casm.name+"/quorum"+i.toString(), "omnids.quorum.quorum", box);
 		node = new CASM(casm.name+"/"+casm.name+i.toString(), casm.module, casm.box);
 		proxy = new CASM(casm.name+"/proxy"+i.toString(), "omnids.quorum.proxy", box);
-        
+
 		system.graph.addNodesFrom([quorum, node, proxy]);
 		system.graph.addEdge(node, quorum);
 		system.graph.addEdge(quorum, proxy);
