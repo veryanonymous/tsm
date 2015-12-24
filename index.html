@@ -6,24 +6,24 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
         <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
         <script src="http://jsnetworkx.org/javascripts/jsnetworkx.js"></script>
+        <script src="jsnetworkx.js"></script>
         <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
         <script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
-
+        
         <link href="jquery.terminal.css" rel="stylesheet"/>
         <script src="jquery.mousewheel.min.js"></script>
         <script src="jquery.terminal-0.8.8.min.js"></script>
+        
+        <script src="agent.js"></script>
+        <script src="system.js"></script>
+        <script src="environment.js"></script>
+        <script src="transformations.js"></script>
         <script src="terminal.js"></script>
-
+        
         <!-- uncomment if no internet connection while testing
         <script src="d3.min.js"></script>
         <script type="text/javascript" src="jsnetworkx.js"></script>
         -->
-        <script src="casm.js"></script>
-        <script src="system.js"></script>
-        <script src="environment.js"></script>
-        <script src="model.js"></script>
-        <script src="transformations.js"></script>
-
 	</head>
     <body>
         <nav class="navbar">
@@ -41,11 +41,10 @@
 	    <div id='terminal'></div>
 		<div id='graph'></div>
         <p id="nodeinfo"></p>
-        <div id="systemcanvas"></div>
+        <!--<div id="systemcanvas"></div>-->
         <div id="canvas"></div>
-
+        
         <script type="text/javascript">
-        	var G;
         	function updateState() {
         		G = new jsnx.DiGraph();
                 G.addNodesFrom(environment.graph.nodes());
@@ -54,22 +53,21 @@
         		drawGraph();
         	}
         	<!--
-            function mouseOverFunction(casmname) {
+            function mouseOverFunction(agentName) {
             	document.getElementById("nodeinfo").innerHTML = "";
                 for (var i = 0; i < G.nodes().length; i++) {
-                	if (G.nodes()[i].name == casmname) {
-                		document.getElementById("nodeinfo").innerHTML += "CASM NAME: "+ G.nodes()[i].name +
-                														"<br>MODULE: "+ G.nodes()[i].module +
-                														"<br>BOX: "+ G.nodes()[i].box;
+                	if (G.nodes()[i].name == agentName) {
+                		document.getElementById("nodeinfo").innerHTML += "Agent name: "+ G.nodes()[i].name + 
+                														"<br>module: "+ G.nodes()[i].module +
+                														"<br>box: "+ G.nodes()[i].box;
                 	}
                 }
             }
-            -->
-
-           function mouseOverFunction(casmname) {
+            
+           function mouseOverFunction(agentName) {
             for (var i = 0; i < environment.graph.nodes().length; i++) {
-                if (environment.graph.nodes()[i].name == casmname) {
-           		 	jsnx.draw(environment.graph.nodes()[i].graph, {element: '#systemcanvas',
+                if (environment.graph.nodes()[i].name == agentName) {
+           		 	jsnx.draw(environment.graph, {element: '#systemcanvas',
                           withLabels: true,
                           nodeAttr: { r: 30,
                         	  		  title: function(d) {return d.label;}
@@ -89,30 +87,35 @@
                	 }
             	}
             }
-
+            -->
+            
             function drawGraph() {
             jsnx.draw(G, {element: '#canvas',
                           withLabels: true,
-                          nodeAttr: { r: 30,
+                          nodeAttr: { r: 40,
                         	  		  title: function(d) {return d.label;},
-                                      "onmouseover": function(d) {return "mouseOverFunction(\""+d.node.name+"\");";}
+                                      <!--"onmouseover": function(d) {return "mouseOverFunction(\""+d.node.name+"\");";}-->
                                      },
                           nodeStyle: { fill: function(d) {return d.data.color;}
                                      },
-                          weighted: true,
+                          layoutAttr: {
+        								charge: -1000,
+        								linkDistance: 150
+    								  },
+                          weighted: false,
                           edgeStyle: { width: '400',
                                        fill: '#999',
-                                       'stroke-width': 5
+                                       'stroke-width': 10
                                       },
                           labelStyle: {fill: 'white',
-                        	  		   "font-size": "13px"
+                        	  		   "font-size": "10px"
                         	  		  },
                           stickyDrag: true
                       })
             }
             updateState();
             </script>
-
+            
     </div>
     </body>
 </html>

@@ -1,36 +1,9 @@
-var System = function(name, graph, inputNodes, outputNodes) {
+var System = function(name, graph) {
 	this.name = typeof name !== 'undefined' ? name : "";
 	this.graph = typeof graph !== 'undefined' ? graph : new jsnx.DiGraph();
-	this.inputNodes = typeof inputNodes !== 'undefined' ? inputNodes : [];
-	this.outputNodes = typeof outputNodes !== 'undefined' ? outputNodes : [];
-
-	this.preconnect = 0;
-	this.postconnect = 0;
+	this.systemagent = new Agent(name);
+	this.graph.addNode(this.systemagent);
 }
-
-System.prototype.preconnect = function(system) {
-
-};
-
-System.prototype.postconnect = function(givenSystem) {
-	// Connects the givenSystem to the outputNodes of the system
-    // Add new nodes
-	this.graph.addNodesFrom(givenSystem.graph.nodes());
-	// Add new edges
-    this.graph.addEdgesFrom(givenSystem.graph.edges());
-    // Connect systems
-    for (i = 0; i < this.outputNodes.length; i++) {
-    	for (j = 0; j < givenSystem.inputNodes.length; j++) {
-    		// Create new edges
-    		this.graph.addEdge(this.outputNodes[i], givenSystem.inputNodes[j]);
-    	}
-    }
-    // Adjust outputNodes
-	this.outputNodes = [];
-	for (i = 0; i < givenSystem.outputNodes.length; i++) {
-		this.outputNodes.push(givenSystem.outputNodes[i]);
-	}
-};
 
 System.prototype.state = function() {
 	var rstr = 'Name: ' + this.name + '\nNodes: ' + this.graph.nodes().toString()+ '\nEdges: ';
@@ -40,6 +13,51 @@ System.prototype.state = function() {
 	return rstr.substring(0, rstr.length-1);
 }
 
+System.prototype.getLeaves = function() {
+	var leaves = [];
+	for (var node in this.graph.outDegree()._values) {
+		if (this.graph.outDegree()._values[node] == 0) {
+			// Leaf node!
+			leaves.push(node);
+		}
+	}
+	console.log("Leaf nodes: " + leaves);
+	return leaves;
+}
+
+System.prototype.serialize = function() {
+	// This is the low-level representation, includes system nodes and edges
+	// TODO: include modules.
+	var nodes = '';
+	for (i = 0; i < this.graph.nodes().length; i++) {
+		nodes += this.graph.nodes()[i] + ",";
+	}
+	nodes = nodes.slice(0,-1);
+	
+	var edges = '';
+	// Add edge pairs separated with semicolons: (a,b);(b,a)
+	for (var i = 0; i < this.graph.edges().length; i++)
+		edges += "("+this.graph.edges()[i]+");"
+	edges = edges.slice(0,-1);
+
+	var rjson = {"nodes":nodes,"edges":edges};
+	console.log("Created JSON string: " + nodes);
+	console.log(rjson);
+	return JSON.stringify(rjson);
+}
+
 System.prototype.toString = function() {
-	return this.name;
+	var nodes = '';
+	for (i = 0; i < this.graph.nodes().length; i++) {
+		nodes += this.graph.nodes()[i] + "\n";
+	}
+	var edges = '';
+	// Add edge pairs separated with semicolons: (a,b);(b,a)
+	for (var i = 0; i < this.graph.edges().length; i++)
+		edges += "("+this.graph.edges()[i]+")\n"
+	edges = edges.slice(0,-1);
+	console.log("Nodes: " + nodes);
+	console.log("Edges: " + edges);
+	
+	return "System " + this.name + "\nNodes:\n" + nodes + "Edges:\n" + edges;
 };

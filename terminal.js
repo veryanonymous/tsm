@@ -1,78 +1,94 @@
 function isNumber(obj) { return !isNaN(parseFloat(obj)) }
+var state_html = "";
+var environment = new Environment();
 
-var App = {
+var Terminal = {
     echo: function(text) {
         this.echo(text);
     },
     help: function() {
         this.echo("Available commands:");
-        this.echo(" create [NODE]               creates a NODE with given name");
-        this.echo(" remove [NODE]               removes the NODE with given name");
-        this.echo(" connect [NODE1] [NODE2]     connects NODE1 to NODE2");
-        this.echo(" disconnect [NODE1] [NODE2]  disconnects NODE1 from NODE2");
-        this.echo(" paxos [NODE]                replicates given NODE with paxos");
-        this.echo(" quorum [NODE]               replicates given NODE with quorum");
-        this.echo(" encrypt [NODE1] [NODE2]     encrypts connection between NODE1");
-        this.echo("                             and NODE2");
-        this.echo(" state                       prints the state of the system");
-        this.echo(" help                        prints this help screen");
+        this.echo(" create [name]			    creates a system agent with given name");
+        this.echo(" remove [name]               removes the node with given name");
+        this.echo(" paxos [name] [n]            replicates given system n-ways with paxos");
+        this.echo(" shard [name] [n]            shards given system n-ways");
+        this.echo(" encrypt [name]				encrypts given system");
+        this.echo(" deploy [name]				creates the deployment graph for given system");
+        this.echo(" draw [name]				    draws the LATT for given system");
+        this.echo(" print [name]				prints the LATT for given system");
+        this.echo(" systems                     prints all systems in the environment");
+        this.echo(" help                        prints this help screen");                        
         this.echo("");
     },
+    systems: function() {
+    	this.echo(environment.getSystems());
+    },
     restart: function() {
-    	restart();
-    	this.echo("Restarted the system! All CASMs are removed.");
+    	environment = new Environment();
+    	this.echo("Restarted the system! All systems are removed.");
     	updateState();
     },
     create: function(name) {
-    	var module = "module.module";
-    	var box = "127.0.0.1:12000";
-
-    	createElement(name, module, box);
-    	this.echo("Added System " + name);
-    	updateState();
+    	if (environment.addSystem(new System(name))){
+    		environment.history_html += "Added system agent " + name + "<br>";
+    		this.echo("Added new system: " + name);
+    		updateState();
+    	}
+    	else
+    		this.echo("System " + name + " already exists!");
     },
     remove: function(name) {
-    	removeElement(name);
-    	this.echo("Removed System " + name);
+    	if (environment.removeSystemByName(name)) {
+    		this.echo("Removed system " + name);
+    		updateState();
+    	}
+    	else
+    		this.echo("System " + name + " does not exist!");
+    },
+    deploy: function(name) {
+    	this.echo("Leaf nodes to be deployed:");
+    	this.echo(environment.getLeaves(name));
     	updateState();
-    },
-    connect: function(name1, name2) {
-    	if (connectSystems(name1, name2)) {
-    		updateState();
-    	}
-    	else
-    		this.echo("System does not exist!");
-    },
-    disconnect: function(name1, name2) {
-    	if (disconnectSystems(name1, name2)) {
-    		updateState();
-    	}
-    	else
-    		this.echo("Either the system or the edge does not exist!");
     },
     paxos: function(name, n) {
     	if (!isNumber(n))
     		this.echo("Second argument must be an integer!");
-    	else if (paxosSystem(name, n))
+    	else if (environment.paxos(name, n))
     		updateState();
     	else
-    		this.echo("CASM " + name + " does not exist!");
+    		this.echo("System " + name + " does not exist!");
     },
-    quorum: function(CASM, n) {
-    	if (!isNumber(n))
-    		this.echo("Second argument must be an integer!");
-    	else if (quorumCASM(CASM, n))
+    encrypt: function(name) {
+    	if (environment.encrypt(name))
     		updateState();
     	else
-    		this.echo("CASM " + CASM + " does not exist!");
+    		this.echo("System " + name + " does not exist!");
     },
-    example: function() {
-    	this.echo("Creating example graph.");
-    	examplegraph();
-    	updateState();
+    shard: function(name, n) {
+    	if (environment.shard(name, n))
+    		updateState();
+    	else
+    		this.echo("System " + name + " does not exist!");
+    },
+    draw: function(name) {
+    	// Draws the LATT of the system with the given name
+    	if (environment.drawSystem(name))
+    		updateState();
+    	else
+    		this.echo("System " + name + " does not exist!");
+    },
+    print: function(name) {
+    	// Prints the LATT of the system with the given name
+    	if (environment.getSystemByName(name))
+    		this.echo(environment.getSystemByName(name).toString());
+    	else
+    		this.echo("System " + name + " does not exist!");
     },
     state: function() {
     	this.echo(environment.toString());
+    },
+    config: function() {
+    	this.echo(environment.serialize());
     },
     about: function() {
         this.echo("To get more information about Transformations, go to <a href='http:///' target='_blank'>Transformations</a>", {raw:true});
@@ -80,7 +96,7 @@ var App = {
 }
 
 jQuery(document).ready(function($) {
-    $('#terminal').terminal(App, {
+    $('#terminal').terminal(Terminal, {
         greetings: "Hi, let's transform some systems!\nYou can start by exploring available commands with help\n",
         prompt: function(p){
             p("$ ");
