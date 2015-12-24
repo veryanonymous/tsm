@@ -1,0 +1,13 @@
+# Python Files #
+################
+.DS_Store
+build/
+dist/
+MANIFEST
+MANIFEST.in
+*.pyc
+*.egg-info
+omnids.egg-info/
+.project
+.pydevproject
+.idea
