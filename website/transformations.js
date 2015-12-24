@@ -1,64 +1,83 @@
-var paxos = function(casm, n) {
-	// Paxos transformation creates new client and server casms:
-	// Server: Replica, Server
-	// Client: Matcher, Client, Proxy
+// TRANSFORMATIONS
+var shard = function(system, n) {
+	// Find the system!
+	var system = this.getSystemByName(systemname);
+	if (!system)
+		return false;
+	console.log("Sharding system!");
+	// Transform!
+	// Add client proxy
+	var clientproxy = new Agent(system.name+"/cproxy", "omnids.shard.clientproxy");
+	system.graph.addNode(clientproxy);
+	system.graph.addEdge(system.systemagent, clientproxy);
+	// Add replicas and main agents
+	for (var j = 0; j < n; j++) {
+		var shard = new Agent(system.name+"/shard"+j.toString(), system.systemagent.module);
+		system.graph.addNode(shard);
+		system.graph.addEdge(system.systemagent, shard);
+		var serverproxy = new Agent(system.name+"/sproxy"+j.toString(), "omnids.shard.serverproxy");
+		system.graph.addNode(serverproxy);
+		system.graph.addEdge(system.systemagent, serverproxy);
 
-	// When transforming a casm, it gets a Replica to the left
-	// And the pre and post connect functions change:
-	// When preconnecting to a PaxosCASM, the Client gets a Proxy
-	// attached to the right
-	// When postconnecting to a PaxosCASM, the Client gets a Matcher
-	// attached to the left
-
-	var proxy,node,replica,system,replicas;
-	var i,j;
-	replicas = [];
-	system = new System(casm.name);
-	for (i = 0; i < n; i++) {
-		replica = new CASM(casm.name+"/replica"+i.toString(), "omnids.paxos.replica", box);
-		node = new CASM(casm.name+"/"+casm.name+i.toString(), casm.module, casm.box);
-		replicas.push(replica);
-		system.graph.addNodesFrom([replica, node]);
-		system.graph.addEdge(replica, node);
-		system.outputNodes.push(node);
 	}
-
-	// Add edges between replicas
-	for (i = 0; i < n; i++){
-		for (j = i+1; j < n; j++) {
-			system.graph.addEdge(replicas[i], replicas[j]);
-			system.graph.addEdge(replicas[j], replicas[i]);
-		}
-	}
-	// Create preconnect system
-	systemToPreconnect = createSystemfromCASM(new CASM(casm.name+"/proxy", "omnids.paxos.proxy"));
-	system.preconnectSystems.push(systemToPreconnect);
-
-	// Create postconnect system
-	systemToPostconnect = createSystemfromCASM(new CASM(casm.name+"/matcher", "omnids.paxos.matcher"));
-	system.postconnectSystems.push(systemToPostconnect);
-
-	systems[casm.name] = system;
-	return system;
-
+	this.updateSystem(systemname, system);
+	return true;
 }
 
-var quorum = function(casm, n) {
-	var node,proxy,quorum,system;
-	system =  new System(casm.name);
-	for (i = 0; i < n; i++) {
-		quorum = new CASM(casm.name+"/quorum"+i.toString(), "omnids.quorum.quorum", box);
-		node = new CASM(casm.name+"/"+casm.name+i.toString(), casm.module, casm.box);
-		proxy = new CASM(casm.name+"/proxy"+i.toString(), "omnids.quorum.proxy", box);
-
-		system.graph.addNodesFrom([quorum, node, proxy]);
-		system.graph.addEdge(node, quorum);
-		system.graph.addEdge(quorum, proxy);
-		system.inputNodes.push(node);
-		system.outputNodes.push(proxy);
-	 }
-	systems[casm.name] = system;
-	return system;
+var encrypt = function(system) {
+	// Find the system!
+	var system = this.getSystemByName(systemname);
+	if (!system)
+		return false;
+	console.log("Encrypting system!");
+	// Transform!
+	// Add encrypter & decrypter
+	var preEncrypter = new Agent(system.name+"/pre_encrypter", "omnids.encrypter");
+	var postEncrypter = new Agent(system.name+"/post_encrypter", "omnids.encrypter");
+	var preDecrypter = new Agent(system.name+"/pre_decrypter", "omnids.decrypter");
+	var postDecrypter = new Agent(system.name+"/post_decrypter", "omnids.decrypter");
+	var main = new Agent(system.name+"/main", system.systemagent.module);
+	console.log("Created agents!");
+	// Add new agents
+	system.graph.addNode(preEncrypter);
+	system.graph.addNode(postEncrypter);
+	system.graph.addNode(preDecrypter);
+	system.graph.addNode(postDecrypter);
+	system.graph.addNode(main);
+	console.log("Added nodes!");
+	
+	// Add new level of the LATT with edges
+	system.graph.addEdge(system.systemagent, preEncrypter);
+	system.graph.addEdge(system.systemagent, postEncrypter);
+	system.graph.addEdge(system.systemagent, preDecrypter);
+	system.graph.addEdge(system.systemagent, postDecrypter);
+	system.graph.addEdge(system.systemagent, main);
+	console.log("Added edges!");
+	
+	this.updateSystem(systemname, system);
+	return true;
 }
 
-
+var paxos = function(systemname, n) {
+	// Find the system!
+	var system = this.getSystemByName(systemname);
+	if (!system)
+		return false;
+	console.log("Replicating system with Paxos!");
+	// Transform!
+	// Add proxy
+	var proxy = new Agent(system.name+"/serverproxy", "omnids.paxos.proxy");
+	system.graph.addNode(proxy);
+	system.graph.addEdge(system.systemagent, proxy);
+	// Add replicas and main agents
+	for (var j = 0; j < n; j++) {
+		var replica = new Agent(system.name+"/replica"+j.toString(), "omnids.paxos.replica");
+		system.graph.addNode(replica);
+		system.graph.addEdge(system.systemagent, replica);
+		var main = new Agent(system.name+"/main"+j.toString(), system.systemagent.module);
+		system.graph.addNode(main);
+		system.graph.addEdge(system.systemagent, main);
+	}
+	this.updateSystem(systemname, system);
+	return true;
+}

@@ -49,14 +49,14 @@ body{
 #terminal {
 		float:left;
 		height:600px;
-		width:62%;
+		width:50%;
 		background-color:#464646;
 		border-radius:7px;
 	}
 
 #systemcanvas {
 		float: left;
-		width:30%;
+		width:45%;
 		height:200px;
 		border-top-left-radius:0px; 
 		border-bottom-left-radius:0px;
@@ -65,7 +65,7 @@ body{
 	
 #canvas {
 		float: left;
-		width:30%;
+		width:45%;
 		height:500px;
 		border-top-left-radius:0px; 
 		border-bottom-left-radius:0px;
