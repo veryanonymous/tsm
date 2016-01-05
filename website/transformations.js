@@ -5,21 +5,36 @@ var shard = function(system, n) {
 	if (!system)
 		return false;
 	console.log("Sharding system!");
-	// Transform!
+
+	// Transform the system!
 	// Add client proxy
 	var clientproxy = new Agent(system.name+"/cproxy", "omnids.shard.clientproxy");
 	system.graph.addNode(clientproxy);
 	system.graph.addEdge(system.systemagent, clientproxy);
+	system.deployment.preconnect = function(system) {
+		// The LATT of the system does not change, just the deployment
+		system.deployment.graph.addNode(clientproxy);
+		for (var k = 0; k < system.deployment.outputNodes.length; k++)
+			system.deployment.graph.addEdge(system.deployment.outputNodes[k], clientproxy);
+		system.outputNodes = [clientproxy];
+	}
+	
 	// Add replicas and main agents
 	for (var j = 0; j < n; j++) {
-		var shard = new Agent(system.name+"/shard"+j.toString(), system.systemagent.module);
-		system.graph.addNode(shard);
-		system.graph.addEdge(system.systemagent, shard);
 		var serverproxy = new Agent(system.name+"/sproxy"+j.toString(), "omnids.shard.serverproxy");
 		system.graph.addNode(serverproxy);
 		system.graph.addEdge(system.systemagent, serverproxy);
-
+		system.deployment.graph.addNode(serverproxy);
+		system.deployment.inputNodes.push(serverproxy);
+		var shard = new Agent(system.name+"/shard"+j.toString(), system.systemagent.module);
+		system.graph.addNode(shard);
+		system.graph.addEdge(system.systemagent, shard);
+		system.deployment.graph.addNode(shard);
+		system.deployment.graph.addEdge(serverproxy, shard);
+		system.deployment.outputNodes.push(shard);
 	}
+	
+	console.log("Sharded system: " + system.toString());
 	this.updateSystem(systemname, system);
 	return true;
 }
@@ -32,7 +47,7 @@ var encrypt = function(system) {
 	console.log("Encrypting system!");
 	// Transform!
 	// Add encrypter & decrypter
-	var preEncrypter = new Agent(system.name+"/pre_encrypter", "omnids.encrypter");
+	var preEncrypter = new Agent(system.name+"/pre_encrypter", "omnids.encrypter", true, false);
 	var postEncrypter = new Agent(system.name+"/post_encrypter", "omnids.encrypter");
 	var preDecrypter = new Agent(system.name+"/pre_decrypter", "omnids.decrypter");
 	var postDecrypter = new Agent(system.name+"/post_decrypter", "omnids.decrypter");

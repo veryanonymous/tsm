@@ -3,6 +3,10 @@ var System = function(name, graph) {
 	this.graph = typeof graph !== 'undefined' ? graph : new jsnx.DiGraph();
 	this.systemagent = new Agent(name);
 	this.graph.addNode(this.systemagent);
+	this.deployment = new Deployment();
+	this.deployment.graph.addNode(this.systemagent);
+	this.deployment.inputNodes = [this.systemagent];
+	this.deployment.outputNodes = [this.systemagent];
 }
 
 System.prototype.state = function() {
@@ -10,7 +14,9 @@ System.prototype.state = function() {
 	for (i = 0; i < this.graph.edges().length; i++) {
 		rstr += '(' + this.graph.edges()[i][0].name + ',' + this.graph.edges()[i][1].name + ');';
 	}
-	return rstr.substring(0, rstr.length-1);
+	rstr = rstr.substring(0, rstr.length-1);
+	rstr = rstr + '\n' + this.deployment.toString();
+	return rstr
 }
 
 System.prototype.getLeaves = function() {
@@ -56,8 +62,6 @@ System.prototype.toString = function() {
 	for (var i = 0; i < this.graph.edges().length; i++)
 		edges += "("+this.graph.edges()[i]+")\n"
 	edges = edges.slice(0,-1);
-	console.log("Nodes: " + nodes);
-	console.log("Edges: " + edges);
 	
-	return "System " + this.name + "\nNodes:\n" + nodes + "Edges:\n" + edges;
+	return "System " + this.name + "\nNodes:\n" + nodes + "Edges:\n" + edges + '\n' + this.deployment.toString();
 };
