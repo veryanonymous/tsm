@@ -10,11 +10,12 @@ var Terminal = {
         this.echo("Available commands:");
         this.echo(" create [name]			    creates a system agent with given name");
         this.echo(" remove [name]               removes the node with given name");
-        this.echo(" paxos [name] [n]            replicates given system n-ways with paxos");
         this.echo(" shard [name] [n]            shards given system n-ways");
-        this.echo(" encrypt [name]				encrypts given system");
-        this.echo(" deploy [name]				creates the deployment graph for given system");
-        this.echo(" draw [name]				    draws the LATT for given system");
+        this.echo(" latt [name]				    draws the LATT for given system");
+        //this.echo(" encrypt [name]				encrypts given system");
+        //this.echo(" paxos [name] [n]            replicates given system n-ways with paxos");
+        this.echo(" deploy [name]				draws the deployment graph for given system");
+        this.echo(" connect [name1] [name2]		connects given system deployments");
         this.echo(" print [name]				prints the LATT for given system");
         this.echo(" systems                     prints all systems in the environment");
         this.echo(" help                        prints this help screen");                        
@@ -46,9 +47,10 @@ var Terminal = {
     		this.echo("System " + name + " does not exist!");
     },
     deploy: function(name) {
-    	this.echo("Leaf nodes to be deployed:");
-    	this.echo(environment.getLeaves(name));
-    	updateState();
+    	if (environment.drawDeployment(name))
+    		updateState();
+    	else
+    		this.echo("System " + name + " does not exist!");
     },
     paxos: function(name, n) {
     	if (!isNumber(n))
@@ -70,9 +72,15 @@ var Terminal = {
     	else
     		this.echo("System " + name + " does not exist!");
     },
-    draw: function(name) {
+    connect: function(name1, name2) {
+    	if (environment.connect(name1, name2))
+    		updateState();
+    	else
+    		this.echo("System " + name + " does not exist!");
+    },
+    latt: function(name) {
     	// Draws the LATT of the system with the given name
-    	if (environment.drawSystem(name))
+    	if (environment.drawLATT(name))
     		updateState();
     	else
     		this.echo("System " + name + " does not exist!");
@@ -84,12 +92,12 @@ var Terminal = {
     	else
     		this.echo("System " + name + " does not exist!");
     },
-    state: function() {
-    	this.echo(environment.toString());
-    },
-    config: function() {
-    	this.echo(environment.serialize());
-    },
+//    state: function() {
+//    	this.echo(environment.toString());
+//    },
+//    config: function() {
+//    	this.echo(environment.serialize());
+//    },
     about: function() {
         this.echo("To get more information about Transformations, go to <a href='http:///' target='_blank'>Transformations</a>", {raw:true});
     },
